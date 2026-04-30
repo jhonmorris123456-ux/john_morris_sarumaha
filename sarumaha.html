@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLTA CAFÉ — Kasir</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700;900&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #f5efe6;
+  --cream2: #ede4d8;
+  --brown-dark: #1a1009;
+  --brown: #2c1a0e;
+  --brown2: #3d2614;
+  --brown3: #5c3d22;
+  --amber: #c8793a;
+  --amber-light: #e09654;
+  --amber-pale: #f7c98b;
+  --tan: #a07850;
+  --text: #1a1009;
+  --text2: #7a5c3e;
+  --text3: #a8896a;
+  --border: #d4bda0;
+  --border2: #e8d5be;
+  --white: #fefcfa;
+  --success: #3a7a50;
+  --danger: #8a2f2f;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8793a' fill-opacity='0.03'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20.83l2.83-2.83 1.41 1.41-2.83 2.83L0 21.24v-.41zM0 3.06l2.83-2.83 1.41 1.41L1.41 4.47 0 4.47V3.06zM20.83 0l-2.83 2.83-1.41-1.41 2.83-2.83 1.41 1.41zM38.59 0l-2.83 2.83-1.41-1.41 2.83-2.83 1.41 1.41z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.header {
+  background: var(--brown-dark);
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--brown3);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--amber-pale);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.logo em {
+  font-style: normal;
+  color: var(--amber);
+  font-size: 10px;
+  letter-spacing: 6px;
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  margin-top: -4px;
+  text-transform: uppercase;
+}
+
+.header-center { display: flex; gap: 4px; }
+
+.nav-btn {
+  background: none;
+  border: 1px solid rgba(200,121,58,0.25);
+  color: var(--text3);
+  padding: 7px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: rgba(200,121,58,0.15);
+  border-color: var(--amber);
+  color: var(--amber-pale);
+}
+
+.clock-wrap { text-align: right; }
+.clock-time {
+  font-family: 'Fira Code', monospace;
+  font-size: 18px;
+  color: var(--amber-pale);
+  font-weight: 500;
+  line-height: 1;
+}
+.clock-date {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  flex: 1;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.panel-left { display: flex; flex-direction: column; overflow: hidden; }
+
+.search-area {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-wrap { flex: 1; position: relative; }
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 16px;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--border2);
+  color: var(--text);
+  padding: 10px 16px 10px 42px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+}
+.search-input:focus { border-color: var(--amber); background: var(--white); }
+.search-input::placeholder { color: var(--text3); }
+
+.cat-tabs { display: flex; gap: 8px; }
+.cat-tab {
+  background: var(--cream);
+  border: 1.5px solid var(--border2);
+  color: var(--text2);
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.cat-tab:hover { border-color: var(--amber); color: var(--amber); }
+.cat-tab.active { background: var(--brown-dark); border-color: var(--brown-dark); color: var(--amber-pale); }
+
+.product-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+.product-area::-webkit-scrollbar { width: 5px; }
+.product-area::-webkit-scrollbar-track { background: transparent; }
+.product-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.section-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border2);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.product-card {
+  background: var(--white);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  position: relative;
+}
+.product-card:hover:not(.habis) {
+  border-color: var(--amber);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(200,121,58,0.15);
+}
+.product-card:active:not(.habis) { transform: scale(0.97); }
+.product-card.habis { opacity: 0.5; cursor: not-allowed; }
+
+.card-emoji {
+  background: var(--cream);
+  text-align: center;
+  padding: 20px 10px 14px;
+  font-size: 36px;
+  border-bottom: 1px solid var(--border2);
+  position: relative;
+}
+.card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--success);
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.card-badge.low { background: var(--danger); }
+.card-badge.out { background: #666; }
+
+.card-body { padding: 12px 14px 14px; }
+.card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brown);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.card-desc { font-size: 11px; color: var(--text3); line-height: 1.4; margin-bottom: 10px; }
+.card-price {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--amber);
+}
+.card-kat { font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+.panel-right {
+  background: var(--white);
+  border-left: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-header {
+  background: var(--brown-dark);
+  padding: 20px 24px 16px;
+  border-bottom: 2px solid var(--brown3);
+}
+.cart-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.cart-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--amber-pale);
+  font-weight: 700;
+}
+.cart-badge {
+  background: var(--amber);
+  color: var(--brown-dark);
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.no-order {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: rgba(168,137,106,0.6);
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+.cart-items::-webkit-scrollbar { width: 3px; }
+.cart-items::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+}
+.empty-cup { font-size: 56px; opacity: 0.2; }
+.empty-text { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--text3); }
+.empty-sub { font-size: 12px; color: var(--text3); opacity: 0.7; }
+
+.cart-item {
+  background: var(--cream);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.2s ease;
+}
+@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+.item-emoji { font-size: 22px; width: 36px; text-align: center; flex-shrink: 0; }
+.item-info { flex: 1; min-width: 0; }
+.item-name { font-size: 13px; font-weight: 600; color: var(--brown); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-unit { font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text3); margin-top: 2px; }
+.item-sub { font-family: 'Fira Code', monospace; font-size: 13px; color: var(--amber); font-weight: 500; }
+
+.qty-wrap { display: flex; align-items: center; gap: 6px; }
+.qty-btn {
+  width: 28px; height: 28px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--brown);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.qty-btn:hover { border-color: var(--amber); color: var(--amber); }
+.qty-num { font-family: 'Fira Code', monospace; font-size: 14px; min-width: 26px; text-align: center; font-weight: 500; }
+.del-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; opacity: 0.5; padding: 4px; transition: opacity 0.2s; }
+.del-btn:hover { opacity: 1; }
+
+.cart-footer {
+  border-top: 1.5px solid var(--border);
+  padding: 18px 20px;
+  background: var(--white);
+}
+.sum-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text2);
+  padding: 4px 0;
+}
+.sum-row .val { font-family: 'Fira Code', monospace; }
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 0;
+  border-top: 1.5px solid var(--border2);
+  margin-top: 4px;
+}
+.total-label { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--brown); }
+.total-val { font-family: 'Fira Code', monospace; font-size: 20px; color: var(--amber); font-weight: 500; }
+
+.disc-wrap { display: flex; align-items: center; justify-content: space-between; }
+.disc-input {
+  background: var(--cream);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Fira Code', monospace;
+  width: 110px;
+  text-align: right;
+  outline: none;
+}
+.disc-input:focus { border-color: var(--amber); }
+
+.payment-section { margin-top: 16px; }
+
+.metode-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.metode-btn {
+  flex: 1;
+  background: var(--cream);
+  border: 1.5px solid var(--border2);
+  color: var(--text2);
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.metode-btn .ico { font-size: 16px; }
+.metode-btn:hover { border-color: var(--amber); }
+.metode-btn.active { background: var(--brown-dark); border-color: var(--brown-dark); color: var(--amber-pale); }
+
+.bayar-label { font-size: 11px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.bayar-input {
+  width: 100%;
+  background: var(--cream);
+  border: 2px solid var(--border2);
+  color: var(--brown);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-family: 'Fira Code', monospace;
+  text-align: right;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+.bayar-input:focus { border-color: var(--amber); background: var(--white); }
+
+.kembalian-box {
+  background: rgba(58,122,80,0.08);
+  border: 1px solid rgba(58,122,80,0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.kembalian-box .lbl { font-size: 12px; color: var(--success); font-weight: 600; letter-spacing: 0.5px; }
+.kembalian-box .val { font-family: 'Fira Code', monospace; font-size: 16px; color: var(--success); font-weight: 500; }
+
+.btn-bayar {
+  width: 100%;
+  background: linear-gradient(135deg, var(--amber), var(--brown3));
+  color: var(--white);
+  border: none;
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+.btn-bayar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-bayar:hover:not(:disabled)::after { opacity: 1; }
+.btn-bayar:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,121,58,0.35); }
+.btn-bayar:active:not(:disabled) { transform: scale(0.98); }
+.btn-bayar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-clear {
+  width: 100%;
+  background: none;
+  border: 1px solid rgba(138,47,47,0.25);
+  color: var(--danger);
+  padding: 9px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+}
+.btn-clear:hover { background: rgba(138,47,47,0.06); border-color: var(--danger); }
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,16,9,0.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.overlay.show { display: flex; }
+
+.modal {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 36px;
+  width: 440px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn { from { transform:scale(0.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+
+.modal-stamp {
+  width: 72px; height: 72px;
+  background: rgba(58,122,80,0.1);
+  border: 2px solid rgba(58,122,80,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 16px;
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--brown);
+  margin-bottom: 4px;
+}
+.modal-sub { text-align: center; color: var(--text3); font-size: 13px; margin-bottom: 20px; }
+
+.receipt {
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 18px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  border: 1px solid var(--border2);
+  position: relative;
+}
+.receipt::before, .receipt::after {
+  content: '';
+  position: absolute;
+  left: -1px; right: -1px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, var(--white) 0, var(--white) 8px, transparent 8px, transparent 16px);
+}
+.receipt::before { top: -1px; }
+.receipt::after { bottom: -1px; transform: rotate(180deg); }
+
+.receipt-hdr { text-align: center; margin-bottom: 10px; }
+.receipt-hdr strong { font-family: 'Playfair Display', serif; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: var(--brown); }
+.receipt-hdr small { display: block; font-size: 11px; color: var(--text3); line-height: 1.5; }
+.r-div { border: none; border-top: 1px dashed var(--border); margin: 8px 0; }
+.r-row { display: flex; justify-content: space-between; }
+.r-total { font-weight: 700; font-size: 13px; color: var(--amber); }
+
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.mbtn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.mbtn-outline { background: var(--cream); color: var(--brown); border: 1.5px solid var(--border); }
+.mbtn-solid { background: var(--brown-dark); color: var(--amber-pale); }
+.mbtn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: var(--brown-dark);
+  color: var(--cream);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  animation: toastPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  border: 1px solid var(--brown3);
+}
+.toast.ok { border-color: rgba(58,122,80,0.4); }
+.toast.err { border-color: rgba(138,47,47,0.4); color: #f09595; }
+@keyframes toastPop { from { transform: translateX(-50%) translateY(40px); opacity:0; } to { transform: translateX(-50%) translateY(0); opacity:1; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    Volta
+    <em>Coffee & Pastry</em>
+  </div>
+  <nav class="header-center">
+    <button class="nav-btn active">☕ Kasir</button>
+  </nav>
+  <div class="clock-wrap">
+    <div class="clock-time" id="clockTime">00:00:00</div>
+    <div class="clock-date" id="clockDate"></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="panel-left">
+    <div class="search-area">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="searchInput" type="text" placeholder="Cari menu..." oninput="filterMenu()">
+      </div>
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-tab active" onclick="setKat('', this)">Semua</button>
+        <button class="cat-tab" onclick="setKat('kopi', this)">☕ Kopi</button>
+        <button class="cat-tab" onclick="setKat('nonkopi', this)">🧋 Non-Kopi</button>
+        <button class="cat-tab" onclick="setKat('makanan', this)">🥐 Makanan</button>
+        <button class="cat-tab" onclick="setKat('dessert', this)">🍰 Dessert</button>
+      </div>
+    </div>
+    <div class="product-area">
+      <div class="section-label">Menu Tersedia</div>
+      <div class="product-grid" id="menuGrid"></div>
+    </div>
+  </div>
+
+  <div class="panel-right">
+    <div class="cart-header">
+      <div class="cart-top">
+        <div class="cart-title">Order</div>
+        <div class="cart-badge" id="cartBadge">0 item</div>
+      </div>
+      <div class="no-order" id="noOrder"></div>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div class="empty-cup">☕</div>
+        <div class="empty-text">Belum ada pesanan</div>
+        <div class="empty-sub">Pilih menu di sebelah kiri</div>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="sum-row">
+        <span>Subtotal</span>
+        <span class="val" id="subtotal">Rp 0</span>
+      </div>
+      <div class="sum-row disc-wrap">
+        <span>Diskon</span>
+        <input class="disc-input" type="number" id="discInput" value="0" min="0" placeholder="0" oninput="calcTotal()">
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-val" id="totalVal">Rp 0</span>
+      </div>
+
+      <div class="payment-section">
+        <div class="metode-tabs">
+          <button class="metode-btn active" onclick="setMetode('tunai', this)">
+            <span class="ico">💵</span> Tunai
+          </button>
+          <button class="metode-btn" onclick="setMetode('transfer', this)">
+            <span class="ico">🏦</span> Transfer
+          </button>
+          <button class="metode-btn" onclick="setMetode('qris', this)">
+            <span class="ico">📱</span> QRIS
+          </button>
+        </div>
+
+        <div class="bayar-label">Uang Diterima</div>
+        <input class="bayar-input" type="number" id="bayarInput" placeholder="0" oninput="calcKembalian()">
+
+        <div class="kembalian-box">
+          <span class="lbl">Kembalian</span>
+          <span class="val" id="kembalianVal">Rp 0</span>
+        </div>
+
+        <button class="btn-bayar" id="btnBayar" onclick="processOrder()" disabled>
+          Selesaikan Pesanan
+        </button>
+        <button class="btn-clear" onclick="clearOrder()">Hapus Semua Pesanan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-stamp">✅</div>
+    <div class="modal-title">Pesanan Berhasil!</div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div class="receipt" id="receiptContent"></div>
+    <div class="modal-btns">
+      <button class="mbtn mbtn-outline" onclick="printReceipt()">🖨 Cetak Struk</button>
+      <button class="mbtn mbtn-solid" onclick="newOrder()">Pesanan Baru</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MENU = [
+  { id:1,  kat:'kopi',    nama:'Espresso',          harga:22000, stok:99, emoji:'☕', desc:'Single shot espresso pekat' },
+  { id:2,  kat:'kopi',    nama:'Cappuccino',         harga:32000, stok:99, emoji:'🥛', desc:'Espresso dengan steamed milk' },
+  { id:3,  kat:'kopi',    nama:'Caramel Latte',      harga:38000, stok:99, emoji:'☕', desc:'Latte manis sirup karamel' },
+  { id:4,  kat:'kopi',    nama:'Cold Brew',          harga:35000, stok:15, emoji:'🧊', desc:'Brew 18 jam, disajikan dingin' },
+  { id:5,  kat:'kopi',    nama:'V60 Pourover',       harga:42000, stok:20, emoji:'☕', desc:'Pour over manual pilihan biji' },
+  { id:6,  kat:'kopi',    nama:'Affogato',           harga:40000, stok:12, emoji:'🍦', desc:'Espresso disiram es krim vanila' },
+  { id:7,  kat:'nonkopi', nama:'Matcha Latte',       harga:36000, stok:25, emoji:'🍵', desc:'Ceremonial grade matcha Jepang' },
+  { id:8,  kat:'nonkopi', nama:'Taro Latte',         harga:35000, stok:18, emoji:'💜', desc:'Latte creamy rasa talas ungu' },
+  { id:9,  kat:'nonkopi', nama:'Strawberry Soda',    harga:30000, stok:20, emoji:'🍓', desc:'Soda segar dengan stroberi asli' },
+  { id:10, kat:'nonkopi', nama:'Lemon Ginger Tea',   harga:28000, stok:30, emoji:'🍋', desc:'Teh herbal hangat menyegarkan' },
+  { id:11, kat:'nonkopi', nama:'Oat Milk Hojicha',   harga:38000, stok:10, emoji:'🌾', desc:'Hojicha smoky dengan oat milk' },
+  { id:12, kat:'makanan', nama:'Croissant',           harga:22000, stok:8,  emoji:'🥐', desc:'Croissant mentega lapis-lapis' },
+  { id:13, kat:'makanan', nama:'Avocado Toast',       harga:45000, stok:10, emoji:'🥑', desc:'Sourdough dengan avo & telur' },
+  { id:14, kat:'makanan', nama:'French Toast',        harga:40000, stok:12, emoji:'🍞', desc:'Roti tebal gula kayu manis' },
+  { id:15, kat:'makanan', nama:'Club Sandwich',       harga:55000, stok:8,  emoji:'🥪', desc:'Sandwich isi daging ayam panggang' },
+  { id:16, kat:'makanan', nama:'Pasta Carbonara',     harga:62000, stok:5,  emoji:'🍝', desc:'Pasta creamy dengan daging asap' },
+  { id:17, kat:'dessert', nama:'Tiramisu',            harga:42000, stok:6,  emoji:'🍮', desc:'Tiramisu classic resep Italia' },
+  { id:18, kat:'dessert', nama:'Lemon Tart',          harga:38000, stok:8,  emoji:'🍰', desc:'Tart lemon kecut manis sempurna' },
+  { id:19, kat:'dessert', nama:'Chocolate Lava',      harga:45000, stok:4,  emoji:'🍫', desc:'Kue coklat leleh di tengahnya' },
+  { id:20, kat:'dessert', nama:'Cheesecake NY',       harga:48000, stok:7,  emoji:'🧁', desc:'New York style cheesecake klasik' },
+];
+
+let cart = [];
+let metode = 'tunai';
+let noOrder = genNoOrder();
+let lastTrx = null;
+let katFilter = '';
+
+document.getElementById('noOrder').textContent = noOrder;
+
+function tick() {
+  const now = new Date();
+  document.getElementById('clockTime').textContent =
+    now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('clockDate').textContent =
+    now.toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+tick(); setInterval(tick, 1000);
+
+function rp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+function genNoOrder() {
+  const d = new Date();
+  const ymd = d.getFullYear().toString().slice(2) +
+    String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  return 'VLT-' + ymd + '-' + String(Math.floor(Math.random()*9999)).padStart(4,'0');
+}
+
+function renderMenu() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('menuGrid');
+  const filtered = MENU.filter(m => {
+    const matchKat = !katFilter || m.kat === katFilter;
+    const matchQ = m.nama.toLowerCase().includes(q) || m.desc.toLowerCase().includes(q);
+    return matchKat && matchQ;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">
+      <div style="font-size:40px;margin-bottom:12px;opacity:0.3">🔍</div>
+      <div style="font-family:'Playfair Display',serif">Menu tidak ditemukan</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(m => {
+    const habis = m.stok <= 0;
+    const low = m.stok > 0 && m.stok <= 5;
+    let badge = '';
+    if (habis) badge = `<div class="card-badge out">Habis</div>`;
+    else if (low) badge = `<div class="card-badge low">Sisa ${m.stok}</div>`;
+
+    return `<div class="product-card ${habis?'habis':''}" onclick="addToCart(${m.id})">
+      <div class="card-emoji">${m.emoji}${badge}</div>
+      <div class="card-body">
+        <div class="card-kat">${m.kat}</div>
+        <div class="card-name">${m.nama}</div>
+        <div class="card-desc">${m.desc}</div>
+        <div class="card-price">${rp(m.harga)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setKat(kat, btn) {
+  katFilter = kat;
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu();
+}
+
+function filterMenu() { renderMenu(); }
+
+function addToCart(id) {
+  const item = MENU.find(m => m.id === id);
+  if (!item || item.stok <= 0) return;
+  const existing = cart.find(c => c.id === id);
+  if (existing) {
+    if (existing.qty >= item.stok) { toast('⚠ Stok tidak cukup!', 'err'); return; }
+    existing.qty++;
+    existing.sub = existing.qty * existing.harga;
+  } else {
+    cart.push({ id, nama: item.nama, emoji: item.emoji, harga: item.harga, qty: 1, sub: item.harga, stok: item.stok });
+  }
+  renderCart();
+  toast(`+ ${item.nama}`, 'ok');
+}
+
+function changeQty(idx, d) {
+  const it = cart[idx];
+  const nq = it.qty + d;
+  if (nq <= 0) { cart.splice(idx, 1); renderCart(); return; }
+  if (nq > it.stok) { toast('⚠ Melebihi stok!', 'err'); return; }
+  it.qty = nq;
+  it.sub = nq * it.harga;
+  renderCart();
+}
+
+function removeItem(idx) { cart.splice(idx, 1); renderCart(); }
+
+function clearOrder() {
+  if (!cart.length) return;
+  if (confirm('Hapus semua pesanan?')) { cart = []; renderCart(); }
+}
+
+function renderCart() {
+  const total = cart.reduce((a, c) => a + c.qty, 0);
+  document.getElementById('cartBadge').textContent = total + ' item';
+
+  const el = document.getElementById('cartItems');
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty">
+      <div class="empty-cup">☕</div>
+      <div class="empty-text">Belum ada pesanan</div>
+      <div class="empty-sub">Pilih menu di sebelah kiri</div>
+    </div>`;
+    calcTotal();
+    return;
+  }
+
+  el.innerHTML = cart.map((it, i) => `
+    <div class="cart-item">
+      <div class="item-emoji">${it.emoji}</div>
+      <div class="item-info">
+        <div class="item-name">${it.nama}</div>
+        <div class="item-unit">${rp(it.harga)} × ${it.qty}</div>
+      </div>
+      <div class="qty-wrap">
+        <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+        <span class="qty-num">${it.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+      </div>
+      <div style="min-width:72px;text-align:right">
+        <div class="item-sub">${rp(it.sub)}</div>
+        <button class="del-btn" onclick="removeItem(${i})">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  calcTotal();
+}
+
+function calcTotal() {
+  const sub = cart.reduce((a, c) => a + c.sub, 0);
+  const disc = parseFloat(document.getElementById('discInput').value) || 0;
+  const total = Math.max(0, sub - disc);
+  document.getElementById('subtotal').textContent = rp(sub);
+  document.getElementById('totalVal').textContent = rp(total);
+  calcKembalian();
+  document.getElementById('btnBayar').disabled = cart.length === 0 || total <= 0;
+}
+
+function calcKembalian() {
+  const disc = parseFloat(document.getElementById('discInput').value) || 0;
+  const sub = cart.reduce((a, c) => a + c.sub, 0);
+  const total = Math.max(0, sub - disc);
+  const bayar = parseFloat(document.getElementById('bayarInput').value) || 0;
+  document.getElementById('kembalianVal').textContent = rp(Math.max(0, bayar - total));
+}
+
+function setMetode(m, btn) {
+  metode = m;
+  document.querySelectorAll('.metode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function processOrder() {
+  const disc = parseFloat(document.getElementById('discInput').value) || 0;
+  const sub = cart.reduce((a, c) => a + c.sub, 0);
+  const total = Math.max(0, sub - disc);
+  const bayar = parseFloat(document.getElementById('bayarInput').value) || 0;
+
+  if (metode === 'tunai' && bayar < total) {
+    toast('⚠ Uang bayar kurang dari total!', 'err');
+    return;
+  }
+
+  lastTrx = {
+    no: noOrder,
+    items: [...cart],
+    sub, disc, total,
+    bayar: metode === 'tunai' ? bayar : total,
+    kembalian: metode === 'tunai' ? bayar - total : 0,
+    metode,
+    waktu: new Date().toLocaleString('id-ID')
+  };
+
+  cart.forEach(ci => {
+    const m = MENU.find(m => m.id === ci.id);
+    if (m) m.stok -= ci.qty;
+  });
+
+  showModal();
+}
+
+function showModal() {
+  const t = lastTrx;
+  document.getElementById('modalSub').textContent = 'No. Order: ' + t.no;
+  const rows = t.items.map(it =>
+    `<div class="r-row"><span>${it.emoji} ${it.nama} ×${it.qty}</span><span>${rp(it.sub)}</span></div>`
+  ).join('');
+
+  document.getElementById('receiptContent').innerHTML = `
+    <div class="receipt-hdr">
+      <strong>VOLTA CAFÉ</strong>
+      <small>Jl. Kopi No. 88, Kota Rasa<br>volta.cafe · @voltacafe</small>
+    </div>
+    <hr class="r-div">
+    <div class="r-row"><span>No. Order</span><span>${t.no}</span></div>
+    <div class="r-row"><span>Waktu</span><span>${t.waktu}</span></div>
+    <div class="r-row"><span>Kasir</span><span>Admin</span></div>
+    <hr class="r-div">
+    ${rows}
+    <hr class="r-div">
+    <div class="r-row"><span>Subtotal</span><span>${rp(t.sub)}</span></div>
+    ${t.disc > 0 ? `<div class="r-row"><span>Diskon</span><span>- ${rp(t.disc)}</span></div>` : ''}
+    <div class="r-row r-total"><span>TOTAL</span><span>${rp(t.total)}</span></div>
+    <div class="r-row"><span>Bayar (${t.metode})</span><span>${rp(t.bayar)}</span></div>
+    <div class="r-row"><span>Kembalian</span><span>${rp(t.kembalian)}</span></div>
+    <hr class="r-div">
+    <div style="text-align:center;font-size:10px;color:var(--text3);line-height:1.8">
+      Setiap tegukan adalah karya seni.<br>Terima kasih sudah singgah di Volta! ☕
+    </div>
+  `;
+
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function printReceipt() {
+  const c = document.getElementById('receiptContent').innerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Struk - ${lastTrx.no}</title>
+  <style>
+    body{font-family:monospace;font-size:12px;max-width:280px;margin:auto;padding:16px}
+    .r-row{display:flex;justify-content:space-between;margin:2px 0}
+    .r-total{font-weight:bold;font-size:13px}
+    hr{border-top:1px dashed #aaa;border-bottom:none;margin:6px 0}
+    .receipt-hdr{text-align:center;margin-bottom:8px}
+    strong{font-size:14px;letter-spacing:2px}
+  </style></head><body>${c}</body></html>`);
+  w.print(); w.close();
+}
+
+function newOrder() {
+  cart = [];
+  document.getElementById('discInput').value = 0;
+  document.getElementById('bayarInput').value = '';
+  document.getElementById('kembalianVal').textContent = 'Rp 0';
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('btnBayar').textContent = 'Selesaikan Pesanan';
+  noOrder = genNoOrder();
+  document.getElementById('noOrder').textContent = noOrder;
+  renderCart();
+  renderMenu();
+}
+
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+renderMenu();
+renderCart();
+</script>
+</body>
+</html>
